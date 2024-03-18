@@ -1,7 +1,6 @@
 package com.example.parkingLot.owner;
 
 import com.example.parkingLot.vehicle.Vehicle;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
