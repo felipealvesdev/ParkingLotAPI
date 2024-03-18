@@ -4,6 +4,9 @@ import com.example.parkingLot.owner.Owner;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+
+@Entity(name = "vehicles")
+@Table(name = "vehicles")
 public class Vehicle {
 
 
