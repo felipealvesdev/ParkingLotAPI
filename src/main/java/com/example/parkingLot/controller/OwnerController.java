@@ -48,6 +48,13 @@ public class OwnerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ownerService.saveOwner(ownerModel));
     }
 
-
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteOwnerById(@PathVariable(value = "id") Long id) {
+        Optional<Owner> owner = ownerRepository.findById(id);
+        if(owner.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner not found.");
+        }
+        ownerRepository.deleteById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Owner deleted successfully.");
+    }
 }
