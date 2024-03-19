@@ -54,6 +54,9 @@ public class OwnerController {
         if(owner.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner not found.");
         }
+        for(Vehicle vehicle : owner.get().getVehicleList()){
+            vehicle.setOwner(null);
+        }
         ownerRepository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Owner deleted successfully.");
     }
