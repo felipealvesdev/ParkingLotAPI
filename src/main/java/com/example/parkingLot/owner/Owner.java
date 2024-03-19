@@ -4,6 +4,7 @@ import com.example.parkingLot.vehicle.Vehicle;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "owners")

@@ -2,10 +2,10 @@ package com.example.parkingLot.controller;
 
 import com.example.parkingLot.owner.Owner;
 import com.example.parkingLot.owner.OwnerDTO;
-import com.example.parkingLot.owner.OwnerRespository;
+import com.example.parkingLot.owner.OwnerRepository;
+import com.example.parkingLot.owner.OwnerService;
 import com.example.parkingLot.vehicle.Vehicle;
 import com.example.parkingLot.vehicle.VehicleService;
-import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,24 +19,21 @@ import java.util.List;
 public class OwnerController {
 
     @Autowired
-    private OwnerRespository ownerRespository;
+    private OwnerRepository ownerRepository;
     @Autowired
     private VehicleService vehicleService;
+    @Autowired
+    private OwnerService ownerService;
 
     @GetMapping()
     public ResponseEntity<List<Owner>> getOwners() {
-        return ResponseEntity.status(HttpStatus.OK).body(ownerRespository.findAll());
+        return ResponseEntity.status(HttpStatus.OK).body(ownerRepository.findAll());
     }
 
     @PostMapping()
-    public ResponseEntity<Owner> createOwner(@RequestBody @Valid OwnerDTO ownerDTO) {
+    public ResponseEntity<Owner> createOwner(@RequestBody OwnerDTO ownerDTO) {
         var ownerModel = new Owner();
         BeanUtils.copyProperties(ownerDTO, ownerModel);
-        if(ownerModel.getVehicleList() != null) {
-            for(Vehicle vehicle : ownerModel.getVehicleList()) {
-                vehicleService.saveVehicle(vehicle);
-            }
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(ownerRespository.save(ownerModel));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ownerService.saveOwner(ownerModel));
     }
 }

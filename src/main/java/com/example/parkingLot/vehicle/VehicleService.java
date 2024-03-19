@@ -7,10 +7,9 @@ import org.springframework.stereotype.Service;
 public class VehicleService {
 
     @Autowired
-    private VehicleRespository vehicleRespository;
+    private VehicleRepository vehicleRepository;
 
     public void saveVehicle(Vehicle vehicle) {
-        vehicleRespository.save(vehicle);
+        vehicleRepository.save(vehicle);
     }
-
 }
