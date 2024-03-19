@@ -41,4 +41,14 @@ public class VehicleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(vehicleRepository.save(vehicleModel));
     }
 
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteVehicleById(@PathVariable( value = "id") Long id) {
+        Optional<Vehicle> vehicle = vehicleRepository.findById(id);
+        if(vehicle.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle not found.");
+        }
+        vehicleRepository.deleteById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("Vehicle deleted successfully.");
+    }
 }
