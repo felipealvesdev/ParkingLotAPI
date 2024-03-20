@@ -60,4 +60,16 @@ public class OwnerController {
         ownerRepository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Owner deleted successfully.");
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateOwnerById(@PathVariable(value = "id") Long id,
+                                                 @RequestBody OwnerDTO ownerDTO) {
+        Optional<Owner> ownerModel = ownerRepository.findById(id);
+        if(ownerModel.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner not found.");
+        }
+        var owner = ownerModel.get();
+        BeanUtils.copyProperties(ownerDTO, owner);
+        return ResponseEntity.status(HttpStatus.OK).body(ownerService.saveOwner(owner));
+    }
 }
