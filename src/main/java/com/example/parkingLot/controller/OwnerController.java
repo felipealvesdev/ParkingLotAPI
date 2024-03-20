@@ -52,6 +52,26 @@ public class OwnerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ownerRepository.save(owner));
     }
 
+    @PostMapping("/{id}")
+    public ResponseEntity<Object> insertVehicleToOwner(@PathVariable(value = "id") Long id,
+                                                       @RequestBody Vehicle vehicleRequested) throws Exception {
+        Optional<Owner> owner = ownerRepository.findById(id);
+        if(owner.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner not found.");
+        }
+        Optional<Vehicle> vehicle = vehicleService.findVehicleById(vehicleRequested.getId());
+        if(vehicle.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle not found.");
+        }
+
+        owner.get().getVehicleList().add(vehicle.get());
+        vehicle.get().setOwner(owner.get());
+        ownerRepository.save(owner.get());
+        vehicleService.saveVehicle(vehicle.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Vehicle added to the owner.");
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteOwnerById(@PathVariable(value = "id") Long id) {
         Optional<Owner> owner = ownerRepository.findById(id);
