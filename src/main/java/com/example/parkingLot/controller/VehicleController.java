@@ -1,6 +1,9 @@
 package com.example.parkingLot.controller;
 
+import com.example.parkingLot.owner.Owner;
+import com.example.parkingLot.owner.OwnerDTO;
 import com.example.parkingLot.owner.OwnerService;
+import com.example.parkingLot.owner.OwnerToVehicleRequest;
 import com.example.parkingLot.vehicle.Vehicle;
 import com.example.parkingLot.vehicle.VehicleDTO;
 import com.example.parkingLot.vehicle.VehicleRepository;
@@ -44,6 +47,25 @@ public class VehicleController {
         BeanUtils.copyProperties(vehicleDTO, vehicle);
         return ResponseEntity.status(HttpStatus.CREATED).body(vehicleRepository.save(vehicle));
     }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<Object> insertOwnerToVehicle(@PathVariable (value = "id") Long id,
+                                                       @RequestBody OwnerToVehicleRequest ownerToVehicleRequest) throws Exception {
+        Optional<Vehicle> vehicle = vehicleRepository.findById(id);
+        if(vehicle.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle not found.");
+        }
+        Optional<Owner> owner = ownerService.findOwnerById(ownerToVehicleRequest.getOwnerId());
+        if(owner.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Owner not found.");
+        }
+        vehicle.get().setOwner(owner.get());
+        owner.get().getVehicleList().add(vehicle.get());
+        vehicleRepository.save(vehicle.get());
+        ownerService.saveOwner(owner.get());
+        return ResponseEntity.status(HttpStatus.OK).body("Owner added to the vehicle.");
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteVehicleById(@PathVariable( value = "id") Long id) {
