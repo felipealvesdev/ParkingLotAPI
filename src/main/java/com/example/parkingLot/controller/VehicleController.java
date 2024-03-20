@@ -48,6 +48,7 @@ public class VehicleController {
         if(vehicle.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle not found.");
         }
+        vehicle.get().getOwner().getVehicleList().remove(vehicle.get());
         vehicleRepository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Vehicle deleted successfully.");
     }
