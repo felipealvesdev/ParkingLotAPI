@@ -43,9 +43,13 @@ public class OwnerController {
 
     @PostMapping()
     public ResponseEntity<Owner> createOwner(@RequestBody OwnerDTO ownerDTO) {
-        var ownerModel = new Owner();
-        BeanUtils.copyProperties(ownerDTO, ownerModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ownerService.saveOwner(ownerModel));
+        var owner = new Owner();
+        BeanUtils.copyProperties(ownerDTO, owner);
+        for(Vehicle vehicle : owner.getVehicleList()) {
+            vehicle.setOwner(owner);
+            vehicleService.saveVehicle(vehicle);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(ownerRepository.save(owner));
     }
 
     @DeleteMapping("/{id}")
@@ -70,6 +74,10 @@ public class OwnerController {
         }
         var owner = ownerModel.get();
         BeanUtils.copyProperties(ownerDTO, owner);
-        return ResponseEntity.status(HttpStatus.OK).body(ownerService.saveOwner(owner));
+        for(Vehicle vehicle : owner.getVehicleList()) {
+            vehicle.setOwner(owner);
+            vehicleService.saveVehicle(vehicle);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(ownerRepository.save(owner));
     }
 }

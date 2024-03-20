@@ -1,5 +1,6 @@
 package com.example.parkingLot.controller;
 
+import com.example.parkingLot.owner.OwnerService;
 import com.example.parkingLot.vehicle.Vehicle;
 import com.example.parkingLot.vehicle.VehicleDTO;
 import com.example.parkingLot.vehicle.VehicleRepository;
@@ -19,6 +20,8 @@ public class VehicleController {
 
     @Autowired
     private VehicleRepository vehicleRepository;
+    @Autowired
+    private OwnerService ownerService;
 
 
     @GetMapping()
@@ -37,11 +40,10 @@ public class VehicleController {
 
     @PostMapping()
     public ResponseEntity<Vehicle> createVehicle(@RequestBody VehicleDTO vehicleDTO) {
-        var vehicleModel = new Vehicle();
-        BeanUtils.copyProperties(vehicleDTO, vehicleModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(vehicleRepository.save(vehicleModel));
+        var vehicle = new Vehicle();
+        BeanUtils.copyProperties(vehicleDTO, vehicle);
+        return ResponseEntity.status(HttpStatus.CREATED).body(vehicleRepository.save(vehicle));
     }
-
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteVehicleById(@PathVariable( value = "id") Long id) {
@@ -49,7 +51,9 @@ public class VehicleController {
         if(vehicle.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Vehicle not found.");
         }
-        vehicle.get().getOwner().getVehicleList().remove(vehicle.get());
+        if(vehicle.get().getOwner() != null) {
+            vehicle.get().getOwner().getVehicleList().remove(vehicle.get());
+        }
         vehicleRepository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Vehicle deleted successfully.");
     }
